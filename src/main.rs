@@ -79,6 +79,38 @@ fn old_enough(age: &Years) -> bool {
     age.0 >= 18
 }
 
+trait Contains {
+    type A;
+    type B;
+
+    fn contains(&self, _: &Self::A, _: &Self::B) -> bool;
+    fn first(&self) -> i32;
+    fn last(&self) -> i32;
+}
+
+struct Container(i32, i32);
+
+fn difference<C: Contains>(container: &C) -> i32 {
+    container.last() - container.first()
+}
+
+impl Contains for Container {
+    type A = i32;
+    type B = i32;
+
+    fn contains(&self, number_1: &i32, number_2: &i32) -> bool {
+        (&self.0 == number_1) && (&self.1 == number_2)
+    }
+
+    fn first(&self) -> i32 {
+        self.0
+    }
+
+    fn last(&self) -> i32 {
+        self.1
+    }
+}
+
 fn main() {
     let _s = Single(A);
 
@@ -110,4 +142,16 @@ fn main() {
     let age_days = age.to_days();
     println!("Old enough {}", old_enough(&age));
     println!("Old enough {}", old_enough(&age_days.to_years()));
+
+    let number_1 = 3;
+    let number_2 = 10;
+    let container = Container(number_1, number_2);
+    println!(
+        "{}{}{}",
+        &number_1,
+        &number_2,
+        container.contains(&number_1, &number_2)
+    );
+    println!("{},{}", container.first(), container.last());
+    println!("{}", difference(&container));
 }
